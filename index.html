@@ -3,18 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BS GOLD PRO – DEMO</title>
-
+<title>BS GOLD PRO – LIGHT</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:Segoe UI,sans-serif;}
-body{background:#060606;height:200vh;}
-
-/* OVERLAY */
-#overlay{
-    position:fixed;inset:0;
-    background:rgba(0,0,0,.6);
-    display:none;z-index:9998;
-}
+body{background:transparent;height:100vh;}
 
 /* FLOAT BUTTON */
 #floatBtn{
@@ -30,169 +22,82 @@ body{background:#060606;height:200vh;}
 
 /* PANEL */
 #injector{
-    position:fixed;width:280px;
+    position:fixed;width:260px;
     background:#020b06;border-radius:16px;
     border:2px solid #00ff66;
     box-shadow:0 0 25px #00ff66;
     display:none;z-index:99999;
     touch-action:none;
     transition:left .08s linear,top .08s linear;
+    padding:12px;text-align:center;color:#00ff66;font-weight:700;
 }
 
-/* HEADER */
-#header{
-    padding:10px 12px;color:#00ff66;
-    font-weight:900;display:flex;
-    justify-content:space-between;
-    border-bottom:1px solid #00ff66;
-}
-
-/* BODY */
-#content{padding:18px;text-align:center;}
-.bigText{
-    font-size:34px;color:#00ff66;
-    text-shadow:0 0 12px #00ff66;
-}
-.periodBox{
-    margin:12px 0;padding:8px;
-    border-radius:10px;
-    border:2px solid #00ff66;
-    box-shadow:0 0 10px #00ff66,inset 0 0 6px #00ff66;
-    color:#00ff66;font-weight:700;font-size:14px;
-}
-.conf{color:#00ff66;font-weight:700;font-size:13px;margin-bottom:10px;}
+/* RESULT */
+#resultText{font-size:24px;margin:10px 0;}
 .startBtn{
-    padding:12px;border-radius:10px;
-    background:#ff1a1a;color:#fff;
-    font-weight:900;cursor:pointer;
-    box-shadow:0 0 15px #ff1a1a;
+    padding:10px;border-radius:10px;background:#ff1a1a;color:#fff;
+    font-weight:900;cursor:pointer;box-shadow:0 0 12px #ff1a1a;
 }
-.latency{margin-top:8px;color:#00ff66;font-size:12px;opacity:.85}
-
-/* LOADING */
-.loading{
-    animation:pulse 1s infinite;
-}
-@keyframes pulse{
-    0%{opacity:.3}
-    50%{opacity:1}
-    100%{opacity:.3}
-}
+.loading{animation:pulse 1s infinite;}
+@keyframes pulse{0%{opacity:.3}50%{opacity:1}100%{opacity:.3}}
 </style>
 </head>
-
 <body>
 
-<div id="overlay"></div>
 <div id="floatBtn">BS</div>
 
 <div id="injector">
-    <div id="header">
-        BS GOLD PRO
-        <span onclick="closePanel()">✖</span>
-    </div>
-    <div id="content">
-        <div class="bigText" id="resultText">WAIT</div>
-        <div class="periodBox" id="period">----</div>
-        <div class="conf" id="confidence">CONFIDENCE --%</div>
-        <div class="startBtn" onclick="startDemo()">⚡ START HACK ⚡</div>
-        <div class="latency">Server Latency: <span id="ping">--</span></div>
-    </div>
+    <div id="resultText">WAIT</div>
+    <div class="startBtn" onclick="startDemo()">⚡ START ⚡</div>
 </div>
 
 <script>
-const floatBtn = document.getElementById("floatBtn");
-const panel = document.getElementById("injector");
-const overlay = document.getElementById("overlay");
-const periodEl = document.getElementById("period");
-const resultText = document.getElementById("resultText");
-const confidenceEl = document.getElementById("confidence");
-const ping = document.getElementById("ping");
-
-let lastPeriod="", locked=false;
+const floatBtn=document.getElementById("floatBtn");
+const panel=document.getElementById("injector");
+const resultText=document.getElementById("resultText");
+let locked=false;
 
 /* OPEN PANEL */
 floatBtn.onclick=()=>{
     panel.style.left="50px";
     panel.style.top="120px";
     panel.style.display="block";
-    overlay.style.display="block";
     floatBtn.style.display="none";
 };
 
-/* CLOSE */
-function closePanel(){
+/* CLOSE ON CLICK RESULT */
+panel.onclick=()=>{
     panel.style.display="none";
-    overlay.style.display="none";
     floatBtn.style.display="flex";
-}
+};
 
-/* PERIOD SYSTEM */
-function updatePeriod(){
-    const now=new Date(new Date().toLocaleString("en-US",{timeZone:"Asia/Kolkata"}));
-    const datePart=now.getFullYear()+String(now.getMonth()+1).padStart(2,"0")+String(now.getDate()).padStart(2,"0");
-    const totalMin=now.getHours()*60+now.getMinutes();
-    const p=datePart+"****"+(10001+totalMin-330);
-    periodEl.innerText=p;
-
-    if(p!==lastPeriod){
-        lastPeriod=p;
-        locked=false;
-        resultText.innerText="WAIT";
-    }
-}
-setInterval(updatePeriod,1000);
-updatePeriod();
-
-/* RESULT (ONE TIME PER PERIOD) */
+/* START DEMO */
 function startDemo(){
     if(locked) return;
-
     locked=true;
     resultText.innerText="SCANNING...";
     resultText.classList.add("loading");
-    confidenceEl.innerText="CONFIDENCE --%";
-
     setTimeout(()=>{
         resultText.classList.remove("loading");
         const big=Math.random()>0.5;
         const num=big?Math.floor(Math.random()*5)+5:Math.floor(Math.random()*5);
         resultText.innerText=(big?"BIG ":"SMALL ")+num;
-        confidenceEl.innerText="CONFIDENCE "+(85+Math.floor(Math.random()*15))+"%";
-        ping.innerText=(20+Math.floor(Math.random()*25))+"ms";
-    },2500);
+        locked=false;
+    },2000);
 }
 
-/* DRAG INJECTOR (FULL PANEL) */
+/* DRAG PANEL */
 let drag=false,dx=0,dy=0;
-panel.addEventListener("pointerdown",e=>{
-    drag=true;
-    dx=e.clientX-panel.offsetLeft;
-    dy=e.clientY-panel.offsetTop;
-});
-document.addEventListener("pointermove",e=>{
-    if(!drag) return;
-    panel.style.left=(e.clientX-dx)+"px";
-    panel.style.top=(e.clientY-dy)+"px";
-});
+panel.addEventListener("pointerdown",e=>{drag=true;dx=e.clientX-panel.offsetLeft;dy=e.clientY-panel.offsetTop;});
+document.addEventListener("pointermove",e=>{if(drag){panel.style.left=(e.clientX-dx)+"px";panel.style.top=(e.clientY-dy)+"px";}});
 document.addEventListener("pointerup",()=>drag=false);
 
 /* DRAG FLOAT BUTTON */
 let fdrag=false,fx=0,fy=0;
-floatBtn.addEventListener("pointerdown",e=>{
-    fdrag=true;
-    fx=e.clientX-floatBtn.offsetLeft;
-    fy=e.clientY-floatBtn.offsetTop;
-});
-document.addEventListener("pointermove",e=>{
-    if(!fdrag) return;
-    floatBtn.style.left=(e.clientX-fx)+"px";
-    floatBtn.style.top=(e.clientY-fy)+"px";
-    floatBtn.style.right="auto";
-    floatBtn.style.bottom="auto";
-});
+floatBtn.addEventListener("pointerdown",e=>{fdrag=true;fx=e.clientX-floatBtn.offsetLeft;fy=e.clientY-floatBtn.offsetTop;});
+document.addEventListener("pointermove",e=>{if(fdrag){floatBtn.style.left=(e.clientX-fx)+"px";floatBtn.style.top=(e.clientY-fy)+"px";floatBtn.style.right="auto";floatBtn.style.bottom="auto";}});
 document.addEventListener("pointerup",()=>fdrag=false);
 </script>
 
 </body>
-</html>
+    </html>
