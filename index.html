@@ -3,101 +3,213 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BS GOLD PRO – LIGHT</title>
+<title>BS GOLD PRO – DEMO</title>
+
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:Segoe UI,sans-serif;}
-body{background:transparent;height:100vh;}
+body{background:#060606;height:200vh;}
 
 /* FLOAT BUTTON */
 #floatBtn{
-    position:fixed;bottom:90px;right:25px;
-    width:62px;height:62px;border-radius:50%;
+    position:fixed;
+    bottom:90px;
+    right:25px;
+    width:62px;
+    height:62px;
+    border-radius:50%;
     background:#021a0c;
     border:2px solid #00ff66;
     box-shadow:0 0 18px #00ff66,inset 0 0 10px #00ff66;
-    display:flex;align-items:center;justify-content:center;
-    color:#00ff66;font-weight:900;cursor:pointer;
-    z-index:9999;touch-action:none;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:#00ff66;
+    font-weight:900;
+    cursor:pointer;
+    z-index:9999;
+    touch-action:none;
 }
 
-/* PANEL */
+/* INJECTOR – CIRCLE ONLY */
 #injector{
-    position:fixed;width:260px;
-    background:#020b06;border-radius:16px;
+    position:fixed;
+    width:260px;
+    height:260px;
+    border-radius:50%;
+    background:#020b06;
     border:2px solid #00ff66;
     box-shadow:0 0 25px #00ff66;
-    display:none;z-index:99999;
+    display:none;
+    z-index:99999;
     touch-action:none;
-    transition:left .08s linear,top .08s linear;
-    padding:12px;text-align:center;color:#00ff66;font-weight:700;
 }
 
-/* RESULT */
-#resultText{font-size:24px;margin:10px 0;}
-.startBtn{
-    padding:10px;border-radius:10px;background:#ff1a1a;color:#fff;
-    font-weight:900;cursor:pointer;box-shadow:0 0 12px #ff1a1a;
+/* HEADER */
+#header{
+    text-align:center;
+    padding-top:12px;
+    color:#00ff66;
+    font-weight:900;
+    font-size:14px;
 }
+
+/* CONTENT */
+#content{
+    height:100%;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+}
+
+.bigText{
+    font-size:30px;
+    color:#00ff66;
+    text-shadow:0 0 12px #00ff66;
+}
+
+.periodBox{
+    margin:8px 0;
+    padding:6px 10px;
+    border-radius:10px;
+    border:2px solid #00ff66;
+    box-shadow:0 0 10px #00ff66,inset 0 0 6px #00ff66;
+    color:#00ff66;
+    font-weight:700;
+    font-size:12px;
+}
+
+.conf{color:#00ff66;font-weight:700;font-size:12px;margin-bottom:8px;}
+
+.startBtn{
+    padding:10px 14px;
+    border-radius:10px;
+    background:#ff1a1a;
+    color:#fff;
+    font-weight:900;
+    cursor:pointer;
+    box-shadow:0 0 15px #ff1a1a;
+    font-size:13px;
+}
+
+.latency{margin-top:6px;color:#00ff66;font-size:11px;opacity:.85}
+
+/* LOADING */
 .loading{animation:pulse 1s infinite;}
-@keyframes pulse{0%{opacity:.3}50%{opacity:1}100%{opacity:.3}}
+@keyframes pulse{
+    0%{opacity:.3}
+    50%{opacity:1}
+    100%{opacity:.3}
+}
 </style>
 </head>
+
 <body>
 
 <div id="floatBtn">BS</div>
 
 <div id="injector">
-    <div id="resultText">WAIT</div>
-    <div class="startBtn" onclick="startDemo()">⚡ START ⚡</div>
+    <div id="header">BS GOLD PRO</div>
+    <div id="content">
+        <div class="bigText" id="resultText">WAIT</div>
+        <div class="periodBox" id="period">----</div>
+        <div class="conf" id="confidence">CONFIDENCE --%</div>
+        <div class="startBtn" onclick="startDemo()">⚡ START HACK ⚡</div>
+        <div class="latency">Latency: <span id="ping">--</span></div>
+    </div>
 </div>
 
 <script>
 const floatBtn=document.getElementById("floatBtn");
 const panel=document.getElementById("injector");
+const periodEl=document.getElementById("period");
 const resultText=document.getElementById("resultText");
-let locked=false;
+const confidenceEl=document.getElementById("confidence");
+const ping=document.getElementById("ping");
 
-/* OPEN PANEL */
+let lastPeriod="",locked=false;
+
+/* OPEN */
 floatBtn.onclick=()=>{
-    panel.style.left="50px";
-    panel.style.top="120px";
+    panel.style.left="60px";
+    panel.style.top="140px";
     panel.style.display="block";
     floatBtn.style.display="none";
 };
 
-/* CLOSE ON CLICK RESULT */
-panel.onclick=()=>{
-    panel.style.display="none";
-    floatBtn.style.display="flex";
-};
+/* PERIOD */
+function updatePeriod(){
+    const now=new Date(new Date().toLocaleString("en-US",{timeZone:"Asia/Kolkata"}));
+    const datePart=now.getFullYear()+String(now.getMonth()+1).padStart(2,"0")+String(now.getDate()).padStart(2,"0");
+    const totalMin=now.getHours()*60+now.getMinutes();
+    const p=datePart+"****"+(10001+totalMin-330);
+    periodEl.innerText=p;
 
-/* START DEMO */
+    if(p!==lastPeriod){
+        lastPeriod=p;
+        locked=false;
+        resultText.innerText="WAIT";
+    }
+}
+setInterval(updatePeriod,1000);
+updatePeriod();
+
+/* RESULT */
 function startDemo(){
     if(locked) return;
     locked=true;
     resultText.innerText="SCANNING...";
     resultText.classList.add("loading");
+    confidenceEl.innerText="CONFIDENCE --%";
+
     setTimeout(()=>{
         resultText.classList.remove("loading");
         const big=Math.random()>0.5;
         const num=big?Math.floor(Math.random()*5)+5:Math.floor(Math.random()*5);
         resultText.innerText=(big?"BIG ":"SMALL ")+num;
-        locked=false;
-    },2000);
+        confidenceEl.innerText="CONFIDENCE "+(85+Math.floor(Math.random()*15))+"%";
+        ping.innerText=(20+Math.floor(Math.random()*25))+"ms";
+    },2200);
 }
 
-/* DRAG PANEL */
+/* DRAG – SAFE FOR WEBVIEW */
 let drag=false,dx=0,dy=0;
-panel.addEventListener("pointerdown",e=>{drag=true;dx=e.clientX-panel.offsetLeft;dy=e.clientY-panel.offsetTop;});
-document.addEventListener("pointermove",e=>{if(drag){panel.style.left=(e.clientX-dx)+"px";panel.style.top=(e.clientY-dy)+"px";}});
+panel.addEventListener("pointerdown",e=>{
+    drag=true;
+    dx=e.clientX-panel.offsetLeft;
+    dy=e.clientY-panel.offsetTop;
+});
+document.addEventListener("pointermove",e=>{
+    if(!drag) return;
+
+    let x=e.clientX-dx;
+    let y=e.clientY-dy;
+
+    const maxX=window.innerWidth-panel.offsetWidth;
+    const maxY=window.innerHeight-panel.offsetHeight;
+
+    panel.style.left=Math.max(0,Math.min(x,maxX))+"px";
+    panel.style.top=Math.max(0,Math.min(y,maxY))+"px";
+});
 document.addEventListener("pointerup",()=>drag=false);
 
-/* DRAG FLOAT BUTTON */
+/* FLOAT DRAG */
 let fdrag=false,fx=0,fy=0;
-floatBtn.addEventListener("pointerdown",e=>{fdrag=true;fx=e.clientX-floatBtn.offsetLeft;fy=e.clientY-floatBtn.offsetTop;});
-document.addEventListener("pointermove",e=>{if(fdrag){floatBtn.style.left=(e.clientX-fx)+"px";floatBtn.style.top=(e.clientY-fy)+"px";floatBtn.style.right="auto";floatBtn.style.bottom="auto";}});
+floatBtn.addEventListener("pointerdown",e=>{
+    fdrag=true;
+    fx=e.clientX-floatBtn.offsetLeft;
+    fy=e.clientY-floatBtn.offsetTop;
+});
+document.addEventListener("pointermove",e=>{
+    if(!fdrag) return;
+    floatBtn.style.left=(e.clientX-fx)+"px";
+    floatBtn.style.top=(e.clientY-fy)+"px";
+    floatBtn.style.right="auto";
+    floatBtn.style.bottom="auto";
+});
 document.addEventListener("pointerup",()=>fdrag=false);
 </script>
 
 </body>
-    </html>
+</html>
